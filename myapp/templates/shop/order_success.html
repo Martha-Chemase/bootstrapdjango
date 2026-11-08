@@ -1,0 +1,22 @@
+{% extends "base.html" %}
+{% block title %}Order confirmed | Meine Accessories{% endblock %}
+{% block content %}
+<main class="commerce-page page-section">
+    <div class="container">
+        <div class="success-panel">
+            <span class="success-icon"><i class="fas fa-circle-check" aria-hidden="true"></i></span>
+            <p class="eyebrow">Thank you</p>
+            <h1 class="commerce-heading">Your order is confirmed.</h1>
+            <p>Order #{{ order.pk }} has been paid. We’ve saved your delivery details and will be in touch about your order.</p>
+            <div class="summary-card success-order-summary">
+                {% for item in order.items.all %}
+                    <div class="summary-row"><span>{{ item.quantity }} × {{ item.product_name }}</span><strong>KES {{ item.unit_price_kes|floatformat:0 }}</strong></div>
+                {% endfor %}
+                <div class="summary-row summary-total"><span>Total paid</span><strong>KES {{ order.total_kes|floatformat:0 }}</strong></div>
+                <p class="summary-note">A confirmation has been recorded on this account.</p>
+            </div>
+            <a class="btn btn-primary btn-shop" href="{% url 'index' %}#products">Continue shopping <span aria-hidden="true">→</span></a>
+        </div>
+    </div>
+</main>
+{% endblock %}

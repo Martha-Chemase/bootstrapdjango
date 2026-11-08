@@ -1,0 +1,37 @@
+{% extends "base.html" %}
+{% block title %}My account | Meine Accessories{% endblock %}
+{% block content %}
+<main class="commerce-page page-section">
+    <div class="container">
+        <p class="eyebrow">Your Meine account</p>
+        <h1 class="commerce-heading">Welcome, {{ request.user.first_name|default:request.user.username }}.</h1>
+        <section class="account-orders">
+            <h2>Your orders</h2>
+            {% for order in orders %}
+                <article class="account-order">
+                    <div>
+                        <p class="product-category">Order #{{ order.pk }} · {{ order.created_at|date:"j M Y" }}</p>
+                        <h3>KES {{ order.total_kes|floatformat:0 }}</h3>
+                        <p>{% for item in order.items.all %}{{ item.quantity }} × {{ item.product_name }}{% if not forloop.last %}, {% endif %}{% endfor %}</p>
+                    </div>
+                    <div class="account-order-action">
+                        {% if order.status == "paid" %}
+                            <span class="order-status order-status-paid">Paid</span>
+                            <a class="text-link" href="{% url 'order_success' order.pk %}">View confirmation</a>
+                        {% else %}
+                            <span class="order-status order-status-pending">Payment pending</span>
+                            <a class="text-link" href="{% url 'order_payment' order.pk %}">Continue payment <span aria-hidden="true">→</span></a>
+                        {% endif %}
+                    </div>
+                </article>
+            {% empty %}
+                <div class="empty-state account-empty">
+                    <h2>Your first Meine find is waiting.</h2>
+                    <p>Once you place an order, you can follow it here.</p>
+                    <a class="btn btn-primary btn-shop" href="{% url 'index' %}#products">Explore the collection <span aria-hidden="true">→</span></a>
+                </div>
+            {% endfor %}
+        </section>
+    </div>
+</main>
+{% endblock %}

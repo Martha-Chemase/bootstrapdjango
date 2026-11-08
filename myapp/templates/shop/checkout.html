@@ -1,0 +1,37 @@
+{% extends "base.html" %}
+{% block title %}Checkout | Meine Accessories{% endblock %}
+{% block content %}
+<main class="commerce-page page-section">
+    <div class="container">
+        <p class="eyebrow">Almost yours</p>
+        <h1 class="commerce-heading">Delivery details</h1>
+        <div class="row g-5">
+            <section class="col-lg-7">
+                <form method="post" class="commerce-form">
+                    {% csrf_token %}
+                    {% for field in form %}
+                        <div class="form-field">
+                            <label for="{{ field.id_for_label }}">{{ field.label }}</label>
+                            {{ field }}
+                            {% for error in field.errors %}<span class="field-error">{{ error }}</span>{% endfor %}
+                        </div>
+                    {% endfor %}
+                    <button class="btn btn-primary btn-shop" type="submit">Review and continue to payment <span aria-hidden="true">→</span></button>
+                </form>
+            </section>
+            <aside class="col-lg-5">
+                <div class="summary-card">
+                    <h2>Your order</h2>
+                    {% for item in items %}
+                        <div class="summary-row"><span>{{ item.quantity }} × {{ item.product.name }}</span><strong>KES {{ item.line_total|floatformat:0 }}</strong></div>
+                    {% endfor %}
+                    <div class="summary-row"><span>Subtotal</span><strong>KES {{ subtotal|floatformat:0 }}</strong></div>
+                    <div class="summary-row"><span>Delivery</span><strong>KES {{ delivery|floatformat:0 }}</strong></div>
+                    <div class="summary-row summary-total"><span>Total</span><strong>KES {{ total|floatformat:0 }}</strong></div>
+                    <p class="summary-note">PayPal {{ paypal_mode|default:"sandbox"|title }} checkout is quoted at USD {{ paypal_total|floatformat:2 }} using KES {{ paypal_rate|floatformat:2 }} per USD. The displayed KES amount is authoritative for this order.</p>
+                </div>
+            </aside>
+        </div>
+    </div>
+</main>
+{% endblock %}

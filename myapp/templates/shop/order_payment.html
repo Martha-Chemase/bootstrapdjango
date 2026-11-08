@@ -1,0 +1,81 @@
+{% extends "base.html" %}
+{% load static %}
+{% block title %}Pay for order #{{ order.pk }} | Meine Accessories{% endblock %}
+{% block extra_head %}
+    {% if paypal_configured %}
+        <script src="https://www.paypal.com/sdk/js?client-id={{ paypal_client_id|urlencode }}&currency={{ paypal_currency }}&intent=capture"></script>
+    {% endif %}
+{% endblock %}
+{% block content %}
+<main class="commerce-page page-section">
+    <div class="container">
+        <div class="checkout-confirmation">
+            <p class="eyebrow">Order #{{ order.pk }}</p>
+            <h1 class="commerce-heading">Complete your payment</h1>
+            {% if order.status == "paid" %}
+                <div class="success-panel"><i class="fas fa-circle-check" aria-hidden="true"></i><h2>This order is paid.</h2><p>Thank you for shopping with Meine.</p><a class="btn btn-primary btn-shop" href="{% url 'order_success' order.pk %}">View your order <span aria-hidden="true">→</span></a></div>
+            {% else %}
+                <div class="row justify-content-center g-4">
+                    <div class="col-lg-7">
+                        <div class="summary-card">
+                            <h2>Delivering to {{ order.full_name }}</h2>
+                            <p>{{ order.address }}<br />{{ order.city }}, {{ order.county }}<br />{{ order.phone }}</p>
+                            <div class="summary-row summary-total"><span>Order total</span><strong>KES {{ order.total_kes|floatformat:0 }}</strong></div>
+                            <p class="summary-note">PayPal {{ paypal_mode|title }} amount: USD {{ order.paypal_total_usd|floatformat:2 }}. The order used KES {{ order.paypal_kes_per_usd|floatformat:2 }} per USD.</p>
+                            {% if paypal_configured %}
+                                <div class="d-none">{% csrf_token %}</div>
+                                <div id="paypal-button-container" class="paypal-button-container"></div>
+                                <p id="paypal-message" class="payment-message" role="status" aria-live="polite"></p>
+                                <noscript>Enable JavaScript to use PayPal checkout.</noscript>
+                            {% else %}
+                                <div class="payment-setup-notice">
+                                    <strong>PayPal sandbox is not configured yet.</strong>
+                                    <p>Set PAYPAL_CLIENT_ID and PAYPAL_CLIENT_SECRET in your local environment to enable the sandbox payment button. Do not share the secret.</p>
+                                </div>
+                            {% endif %}
+                        </div>
+                    </div>
+                </div>
+            {% endif %}
+        </div>
+    </div>
+</main>
+{% endblock %}
+{% block extra_scripts %}
+    {% if paypal_configured and order.status != "paid" %}
+        <script>
+            (() => {
+                const message = document.getElementById("paypal-message");
+                const csrfToken = document.querySelector("[name=csrfmiddlewaretoken]");
+                const postJson = async (url, body) => {
+                    const response = await fetch(url, {
+                        method: "POST",
+                        headers: {
+                            "Content-Type": "application/json",
+                            "X-CSRFToken": csrfToken.value
+                        },
+                        body: JSON.stringify(body)
+                    });
+                    const data = await response.json();
+                    if (!response.ok) {
+                        throw new Error(data.error || "The payment request could not be completed.");
+                    }
+                    return data;
+                };
+
+                paypal.Buttons({
+                    createOrder: () => postJson("{% url 'create_paypal_order' order.pk %}", {}).then(data => data.orderID),
+                    onApprove: data => {
+                        message.textContent = "Confirming your payment...";
+                        return postJson("{% url 'capture_paypal_order' order.pk %}", {orderID: data.orderID})
+                            .then(result => { window.location.assign(result.redirect); })
+                            .catch(error => { message.textContent = error.message; });
+                    },
+                    onError: error => {
+                        message.textContent = error.message || "PayPal could not complete the payment. Please try again.";
+                    }
+                }).render("#paypal-button-container");
+            })();
+        </script>
+    {% endif %}
+{% endblock %}

@@ -1,0 +1,155 @@
+{% extends "base.html" %}
+{% load static %}
+{% block content %}
+    <header class="masthead">
+        <div class="masthead-shade"></div>
+        <div class="container masthead-content">
+            <p class="eyebrow masthead-eyebrow">A little detail. A lot of you.</p>
+            <h1>Jewellery that<br />feels like <em>you.</em></h1>
+            <p class="masthead-copy">Find the finishing touch for everyday moments, big celebrations, and everything in between.</p>
+            <a class="btn btn-primary btn-shop" href="#products">Explore the collection <span aria-hidden="true">→</span></a>
+            <p class="masthead-note">Thoughtful accessories, selected in Nairobi.</p>
+        </div>
+        <a class="scroll-cue" href="#services" aria-label="Scroll to discover"><span></span></a>
+    </header>
+
+    <main>
+        <section class="service-section page-section" id="services">
+            <div class="container">
+                <div class="section-intro text-center">
+                    <p class="eyebrow">The Meine experience</p>
+                    <h2 class="section-heading">A good find, made personal.</h2>
+                    <p class="section-lead">The right accessory does more than complete an outfit. It helps you show up as yourself.</p>
+                </div>
+                <div class="row g-4 service-grid">
+                    <div class="col-md-4">
+                        <article class="service-card">
+                            <img class="service-image" src="{% static 'assets/img/portfolio/15.jpg' %}" alt="A curated display of necklaces and jewellery" loading="lazy" />
+                            <span class="service-number">01</span>
+                            <h3>A considered edit</h3>
+                            <p>Explore earrings, necklaces, bracelets, and standout details selected to bring character to your look.</p>
+                        </article>
+                    </div>
+                    <div class="col-md-4">
+                        <article class="service-card">
+                            <img class="service-image" src="{% static 'assets/img/portfolio/10.jpg' %}" alt="Sculptural silver rings styled on a hand" loading="lazy" />
+                            <span class="service-number">02</span>
+                            <h3>Style your way</h3>
+                            <p>Keep it simple with one favourite or layer pieces together. Find the mix that feels natural to you.</p>
+                        </article>
+                    </div>
+                    <div class="col-md-4">
+                        <article class="service-card">
+                            <img class="service-image" src="{% static 'assets/img/portfolio/14.jpg' %}" alt="Colourful jewellery and accessories worn together" loading="lazy" />
+                            <span class="service-number">03</span>
+                            <h3>Made for meaningful gifts</h3>
+                            <p>Mark a birthday, celebration, or just-because moment with a piece picked with someone special in mind.</p>
+                        </article>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <section class="product-section page-section" id="products">
+            <div class="container">
+                <div class="section-intro text-center">
+                    <p class="eyebrow">The collection</p>
+                    <h2 class="section-heading">Find your finishing touch.</h2>
+                    <p class="section-lead">From everyday favourites to pieces that take centre stage, explore the Meine collection. Starter prices are editable in the store admin.</p>
+                </div>
+                <div class="row g-4 product-grid">
+                    {% for product in products %}
+                        <div class="col-sm-6 col-lg-4">
+                            <article class="product-card">
+                                <div class="product-image"><img src="{% static product.image %}" alt="{{ product.name }}" loading="lazy" /></div>
+                                <div class="product-info">
+                                    <p class="product-category">{{ product.category }}</p>
+                                    <h3>{{ product.name }}</h3>
+                                    <p class="product-description">{{ product.description }}</p>
+                                    <p class="product-price">KES {{ product.price_kes|floatformat:0 }}</p>
+                                    <form method="post" action="{% url 'add_to_cart' product.pk %}" class="add-to-cart-form">
+                                        {% csrf_token %}
+                                        <input type="hidden" name="next" value="{% url 'index' %}#products" />
+                                        <button class="btn btn-primary add-to-cart-button" type="submit"><i class="fas fa-bag-shopping me-2" aria-hidden="true"></i>Add to bag</button>
+                                    </form>
+                                </div>
+                            </article>
+                        </div>
+                    {% empty %}
+                        <div class="col-12"><p class="text-center">The collection is being prepared. Please check back soon.</p></div>
+                    {% endfor %}
+                </div>
+            </div>
+        </section>
+
+        <section class="team-section page-section" id="team">
+            <div class="container">
+                <div class="section-intro text-center">
+                    <p class="eyebrow">Here for the little details</p>
+                    <h2 class="section-heading">Meet your Meine team.</h2>
+                    <p class="section-lead">From choosing a piece to getting it ready as a gift, we are here to make it a lovely experience.</p>
+                </div>
+                <div class="row g-4 justify-content-center">
+                    {% for member in team %}
+                        <div class="col-sm-6 col-lg-4">
+                            <article class="team-card">
+                                <img src="{% static member.image %}" alt="{{ member.name }} team portrait" loading="lazy" />
+                                <div class="team-card-info"><h3>{{ member.name }}</h3><p>{{ member.role }}</p></div>
+                            </article>
+                        </div>
+                    {% endfor %}
+                </div>
+            </div>
+        </section>
+
+        <section class="about-section page-section" id="about">
+            <div class="container">
+                <div class="row align-items-center g-5">
+                    <div class="col-lg-5 about-copy">
+                        <p class="eyebrow">A little about us</p>
+                        <h2 class="section-heading">Accessories for your kind of everyday.</h2>
+                        <p>Meine Nairobi Accessories is about the joy of finding a piece that just feels right. We bring together expressive jewellery and thoughtful finishing touches for the different ways you move through your day.</p>
+                        <p>Our collection is here to inspire your own style—whether you are choosing a small detail for yourself, building a layered look, or finding a gift with meaning.</p>
+                        <a class="text-link" href="#products">Get to know the collection <span aria-hidden="true">→</span></a>
+                    </div>
+                    <div class="col-lg-7">
+                        <div class="about-gallery" aria-label="A look behind Meine Accessories">
+                            <figure class="about-photo about-photo-tall"><img src="{% static 'assets/img/about/1.jpg' %}" alt="Jewellery arranged together in a styled flat lay" loading="lazy" /></figure>
+                            <figure class="about-photo"><img src="{% static 'assets/img/about/2.jpg' %}" alt="Browsing a jewellery stall at an open-air market" loading="lazy" /></figure>
+                            <figure class="about-photo"><img src="{% static 'assets/img/about/3.jpg' %}" alt="Hands carefully preparing an accessory" loading="lazy" /></figure>
+                            <figure class="about-photo"><img src="{% static 'assets/img/about/4.jpg' %}" alt="A close look at statement earrings being displayed" loading="lazy" /></figure>
+                            <figure class="about-photo about-photo-last"><img src="{% static 'assets/img/about/5.jpg' %}" alt="A customer wearing statement earrings" loading="lazy" /></figure>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <section class="contact-section page-section" id="contact">
+            <div class="container">
+                <div class="row g-5">
+                    <div class="col-lg-5 contact-copy">
+                        <p class="eyebrow">Come say hello</p>
+                        <h2>Let’s find your finishing touch.</h2>
+                        <p>Questions about an item, an order, or a gift? Send the Meine team a message and we’ll be happy to help.</p>
+                        <div class="contact-detail"><i class="fas fa-location-dot" aria-hidden="true"></i><div><strong>Find us</strong><span>{{ shop_location }}</span><a href="https://maps.google.com/?q=Nairobi%2C+Kenya" target="_blank" rel="noopener noreferrer">Explore Nairobi on the map ↗</a></div></div>
+                        <div class="contact-detail"><i class="fas fa-envelope" aria-hidden="true"></i><div><strong>Email</strong>{% if shop_contact_email %}<a href="mailto:{{ shop_contact_email }}">{{ shop_contact_email }}</a>{% else %}<span>Use the contact form or configure a business email.</span>{% endif %}</div></div>
+                        <div class="contact-detail"><i class="fas fa-phone" aria-hidden="true"></i><div><strong>Call or WhatsApp</strong>{% if shop_contact_phone %}<a href="tel:{{ shop_contact_phone }}">{{ shop_contact_phone }}</a>{% else %}<span>Business phone number to be added.</span>{% endif %}{% if shop_socials.whatsapp %}<a href="{{ shop_socials.whatsapp }}" target="_blank" rel="noopener noreferrer">Message us on WhatsApp ↗</a>{% endif %}</div></div>
+                    </div>
+                    <div class="col-lg-7">
+                        <form class="contact-form" method="post" action="{% url 'index' %}#contact">
+                            {% csrf_token %}
+                            <div class="row g-3">
+                                <div class="col-md-6"><label for="{{ contact_form.name.id_for_label }}">Your name</label>{{ contact_form.name }}{{ contact_form.name.errors }}</div>
+                                <div class="col-md-6"><label for="{{ contact_form.email.id_for_label }}">Email address</label>{{ contact_form.email }}{{ contact_form.email.errors }}</div>
+                                <div class="col-12"><label for="{{ contact_form.subject.id_for_label }}">Subject</label>{{ contact_form.subject }}{{ contact_form.subject.errors }}</div>
+                                <div class="col-12"><label for="{{ contact_form.message.id_for_label }}">How can we help?</label>{{ contact_form.message }}{{ contact_form.message.errors }}</div>
+                                <div class="col-12"><button class="btn btn-primary btn-shop" type="submit">Send message <span aria-hidden="true">→</span></button></div>
+                            </div>
+                        </form>
+                    </div>
+                </div>
+            </div>
+        </section>
+    </main>
+{% endblock %}

@@ -1,0 +1,25 @@
+{% extends "base.html" %}
+{% block title %}Log in | Meine Accessories{% endblock %}
+{% block content %}
+<main class="account-page page-section">
+    <div class="account-card">
+        <p class="eyebrow">Welcome back</p>
+        <h1 class="commerce-heading">Log in to Meine.</h1>
+        <p class="account-intro">Sign in to continue to checkout and keep your orders together.</p>
+        {% if form.non_field_errors %}<div class="form-errors">{{ form.non_field_errors }}</div>{% endif %}
+        <form method="post" class="commerce-form">
+            {% csrf_token %}
+            {% for field in form %}
+                <div class="form-field">
+                    <label for="{{ field.id_for_label }}">{{ field.label }}</label>
+                    {{ field }}
+                    {% for error in field.errors %}<span class="field-error">{{ error }}</span>{% endfor %}
+                </div>
+            {% endfor %}
+            <button class="btn btn-primary btn-shop w-100" type="submit">Log in <span aria-hidden="true">→</span></button>
+            <input type="hidden" name="next" value="{{ next }}" />
+        </form>
+        <p class="account-switch">New to Meine? <a href="{% url 'signup' %}">Create an account</a></p>
+    </div>
+</main>
+{% endblock %}

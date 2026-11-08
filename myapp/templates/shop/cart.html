@@ -1,0 +1,53 @@
+{% extends "base.html" %}
+{% load static %}
+{% block title %}Your bag | Meine Accessories{% endblock %}
+{% block content %}
+<main class="commerce-page page-section">
+    <div class="container">
+        <p class="eyebrow">Your selection</p>
+        <h1 class="commerce-heading">Your shopping bag</h1>
+        {% if items %}
+            <div class="row g-5">
+                <div class="col-lg-8">
+                    <div class="cart-list">
+                        {% for item in items %}
+                            <article class="cart-item">
+                                <img src="{% static item.product.image %}" alt="{{ item.product.name }}" />
+                                <div class="cart-item-details">
+                                    <p class="product-category">{{ item.product.category }}</p>
+                                    <h2>{{ item.product.name }}</h2>
+                                    <p>KES {{ item.product.price_kes|floatformat:0 }} each</p>
+                                    <form method="post" action="{% url 'update_cart' item.product.pk %}" class="cart-quantity">
+                                        {% csrf_token %}
+                                        <label for="quantity-{{ item.product.pk }}">Quantity</label>
+                                        <input id="quantity-{{ item.product.pk }}" type="number" name="quantity" min="0" max="99" value="{{ item.quantity }}" />
+                                        <button class="text-button" type="submit">Update</button>
+                                    </form>
+                                </div>
+                                <strong class="cart-line-price">KES {{ item.line_total|floatformat:0 }}</strong>
+                            </article>
+                        {% endfor %}
+                    </div>
+                </div>
+                <aside class="col-lg-4">
+                    <div class="summary-card">
+                        <h2>Order summary</h2>
+                        <div class="summary-row"><span>Subtotal</span><strong>KES {{ subtotal|floatformat:0 }}</strong></div>
+                        <div class="summary-row"><span>Delivery</span><span>Calculated at checkout</span></div>
+                        <p class="summary-note">Delivery details and final total are confirmed at checkout.</p>
+                        <a class="btn btn-primary btn-shop w-100" href="{% url 'checkout' %}">Continue to checkout <span aria-hidden="true">→</span></a>
+                        <a class="continue-shopping" href="{% url 'index' %}#products">Continue shopping</a>
+                    </div>
+                </aside>
+            </div>
+        {% else %}
+            <div class="empty-state">
+                <span class="empty-state-icon"><i class="fas fa-bag-shopping" aria-hidden="true"></i></span>
+                <h2>Your bag is waiting for a favourite.</h2>
+                <p>Explore the collection and add something that feels like you.</p>
+                <a class="btn btn-primary btn-shop" href="{% url 'index' %}#products">Browse the collection <span aria-hidden="true">→</span></a>
+            </div>
+        {% endif %}
+    </div>
+</main>
+{% endblock %}
