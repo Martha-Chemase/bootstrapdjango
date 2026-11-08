@@ -29,7 +29,11 @@ SECRET_KEY = 'django-insecure-(z&a*f%@_bp(wqc7&6b-qr&c$7gh_6@a6&wh^zxc4-nudpht71
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
 
-ALLOWED_HOSTS = []
+ALLOWED_HOSTS = [
+    "bootstrapdjango-snor.onrender.com",
+    "localhost",
+    "127.0.0.1",
+]
 
 
 # Application definition
